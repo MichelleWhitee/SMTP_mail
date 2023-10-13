@@ -1,14 +1,16 @@
 from socket import *
+
 import ssl
 import base64
 
+import re
 import sys
 
 from PyQt5 import uic, QtGui, QtCore
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QMessageBox
 
 uiMainWindow, QMainWindow = uic.loadUiType("ui/mainWindow.ui")
-
+regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 
 class MainWindow(QMainWindow, uiMainWindow):
     def __init__(self):
@@ -93,6 +95,11 @@ class MainWindow(QMainWindow, uiMainWindow):
             messageBox.setDefaultButton(QMessageBox.Ok)
             messageBox.exec_()
 
+    def checkEmail(self, email):
+        if re.fullmatch(regex, email):
+            return True
+        else:
+            return False
 
     def send_clicked(self):
         if self.statusLabel.text() == "OK":
@@ -105,7 +112,9 @@ class MainWindow(QMainWindow, uiMainWindow):
                 messageBox.exec_()
 
             else:
-                if "@" and "." not in self.to_lineEdit.text():
+                valid = self.checkEmail(self.to_lineEdit.text())
+                print(valid)
+                if not valid:
                     messageBox = QMessageBox(self)
                     messageBox.setWindowTitle("Неудача")
                     messageBox.setIcon(QMessageBox.Warning)
@@ -143,7 +152,6 @@ class MainWindow(QMainWindow, uiMainWindow):
     def recvMsg(self):
         try:
             return self.sslSocket.recv(2048).decode()
-            pass
 
         except timeout:
             print("Message recv timed out")
