@@ -10,7 +10,7 @@ from PyQt5 import uic, QtGui, QtCore
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QLineEdit, QMessageBox
 
 uiMainWindow, QMainWindow = uic.loadUiType("ui/mainWindow.ui")
-regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+regex = r'\b[A-Za-z0-9]+@[A-Za-z0-9]+\.[A-Z|a-z]{2,7}\b'
 
 class MainWindow(QMainWindow, uiMainWindow):
     def __init__(self):
@@ -41,6 +41,7 @@ class MainWindow(QMainWindow, uiMainWindow):
         if close == QMessageBox.Yes:
             event.accept()
 
+            print("Quit")
             self.quit()
 
         else:
@@ -186,7 +187,7 @@ class MainWindow(QMainWindow, uiMainWindow):
         self.sendMsg(f"MAIL FROM:<{sender}>")
         self.sendMsg(f"RCPT TO:<{receiver}>")
         self.sendMsg(f"DATA")
-        self.sendMsg(f"SUBJECT: {subject}\n", returnMsg=False)
+        self.sendMsg(f"SUBJECT: {subject}\n")
         self.sendMsg(msg, returnMsg=False)
         self.sendMsg(".")
 
